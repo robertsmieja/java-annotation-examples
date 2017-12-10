@@ -1,0 +1,47 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+//ext.junit4Version        = '4.12'
+//ext.junitVintageVersion  = '4.12.2'
+ext.junitPlatformVersion = '1.0.2'
+ext.junitJupiterVersion  = '5.0.2'
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.junit.platform.gradle.plugin'
+
+compileTestJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
+
+tasks['eclipse'].dependsOn tasks['cleanEclipse'] //Delete previous Eclipse project files instead of merging them
+tasks['junitPlatformTest'].ignoreExitValue = true //Don't fail the build when a test fails
+
+dependencies {
+    // JUnit Jupiter API and TestEngine implementation
+    testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")
+
+    //For parameterized tests
+    testCompile("org.junit.jupiter:junit-jupiter-params:${junitJupiterVersion}")
+    
+    //TODO Try removing this on the official release of Eclipse Oxygen.1
+    //Fix ClassDefNotFound issues in Eclipse
+    testCompile("org.junit.platform:junit-platform-launcher:${junitPlatformVersion}")
+
+    // If you also want to support JUnit 3 and JUnit 4 tests
+//    testCompile("junit:junit:${junit4Version}")
+//    testRuntime("org.junit.vintage:junit-vintage-engine:${junitVintageVersion}")
+}
