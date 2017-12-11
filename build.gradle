@@ -7,8 +7,16 @@ buildscript {
     }
 }
 
-repositories {
-    mavenCentral()
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'eclipse'
+    apply plugin: 'idea'
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks['eclipse'].dependsOn tasks['cleanEclipse'] //Delete previous Eclipse project files instead of merging them
 }
 
 //ext.junit4Version        = '4.12'
@@ -16,20 +24,17 @@ repositories {
 ext.junitPlatformVersion = '1.0.2'
 ext.junitJupiterVersion  = '5.0.2'
 
-apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
+
 apply plugin: 'org.junit.platform.gradle.plugin'
 
-compileTestJava {
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
-}
-
-tasks['eclipse'].dependsOn tasks['cleanEclipse'] //Delete previous Eclipse project files instead of merging them
 tasks['junitPlatformTest'].ignoreExitValue = true //Don't fail the build when a test fails
 
 dependencies {
+    //depend on the sub-project
+    //this will also add the AnnotationProcessor SPI implementation
+    //to the javac classpath so it will be picked up
+    compile(project(":java-annotation-provider"))
+
     // JUnit Jupiter API and TestEngine implementation
     testCompile("org.junit.jupiter:junit-jupiter-api:${junitJupiterVersion}")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:${junitJupiterVersion}")

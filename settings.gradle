@@ -1,0 +1,9 @@
+include 'java-annotation-provider'
+
+rootProject.name = 'java-annotations-examples'
+rootProject.children.each {project ->
+    String projectName = project.name
+    String projectDirName = "subProjects/$projectName"
+    project.projectDir = new File(settingsDir, projectDirName)
+    assert project.projectDir.isDirectory()
+}
